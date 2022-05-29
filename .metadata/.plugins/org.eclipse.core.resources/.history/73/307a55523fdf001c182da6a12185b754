@@ -1,0 +1,80 @@
+package com.newlecture.app.service;
+
+import java.sql.SQLException;
+import java.util.List;
+import java.util.Scanner;
+
+import com.newlecture.app.entity.Notice;
+
+public class NoticeConsole {
+
+	private NoticeService service;
+	private int page;
+	private int count; // NoticeCount
+	private String searchWord;
+	
+	public NoticeConsole() {
+		service = new NoticeService();
+		page=1;
+		count=0;
+		searchWord="";
+	}
+
+	public void printNoticeList() throws ClassNotFoundException, SQLException {
+		List<Notice> list = service.getList(page);
+		int count = service.getCount(); // 매번 다시 구해야 하므로 지역변수로.
+		
+		// 매번 다시 구해야 하므로 지역변수로.
+		int lastPage = count/10; // 100 -> 10, 90 ->9, 93/10->9 3개가 날라간다.
+		lastPage = count%10>0?lastPage+1:lastPage; // 남은 페이지가 있다면 반올림 필요.
+		
+		System.out.println("────────────────────────────────────");
+		System.out.printf("<공지사항> 총 %d 게시글\n", count);
+		System.out.println("────────────────────────────────────");
+		for(Notice n : list) {
+			System.out.printf("%d. %s / %s / %s\n",
+					n.getId(), n.getTitle(), n.getWriterId(),n.getRegDatel());
+		}
+		System.out.println("────────────────────────────────────");
+		System.out.printf("           %d/%d pages\n", page, lastPage);	
+		System.out.println();
+	}
+
+	public int inputNoticeMenu() {
+		Scanner scan = new Scanner(System.in);
+		System.out.print("1.상세조회 / 2.이전 / 3.다음 / 4.글쓰기 / 5.검색 / 6.종료>");
+		String menu_ = scan.nextLine();
+		int menu = Integer.parseInt(menu_);
+		return menu;
+	}
+
+	public void movePrevList() {
+		if(page==1) {
+			System.out.println("=====================");
+			System.out.println("[이전 페이지가 없습니다.]");
+			System.out.println("=====================");
+			return;
+		}
+		page--;
+	}
+
+	public void moveNextList() throws ClassNotFoundException, SQLException {
+		// 중복 되어도 다시 계산한다. 실시간 프로그램.
+		int count = service.getCount(); 	
+		int lastPage = count/10; 
+		lastPage = count%10>0?lastPage+1:lastPage; 
+		
+		if(page==lastPage) {
+			System.out.println("=====================");
+			System.out.println("[다음 페이지가 없습니다.]");
+			System.out.println("=====================");
+			return;
+		}
+		page++;
+	}
+
+	public void inputSearchWord() {
+		Scanner scan = new Scanner(System.in);
+		searchWord = scan.nextList();
+	}
+}

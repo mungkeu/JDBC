@@ -1,0 +1,12 @@
+package com.newlecture.app.entity;
+
+import java.util.Date;
+
+public class Notice {
+	private int id;
+	private String title;
+	private String writerId; 
+	private Date regDatel;
+	private String content; 
+	private int hit;
+}
